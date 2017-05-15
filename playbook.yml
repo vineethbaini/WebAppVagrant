@@ -1,0 +1,20 @@
+---
+- hosts: app*
+  become: true
+  become_method: sudo
+  vars:
+   document_root: /vagrant
+
+  handlers:
+    - name: reload apache
+      service: name=apache2 state=reloaded
+
+  tasks:
+    - name: update apt cache
+      apt: update_cache=yes
+    - include: tasks/apache.yml
+    - name: install mysql/php
+      apt: name={{ item }} state=present
+      with_items:
+       - mysql-server
+       - php5
