@@ -1,0 +1,31 @@
+---
+- name: Create groups in APP Hosts
+  group: name={{ user_type.groupname }} state=present
+
+- name: create User home FS
+  file:
+    path: /opt/app/home
+    state: directory
+    mode: 0775
+
+- name: Add users | create users, shell, home dirs
+  user:
+    name={{ user_type.username }}
+    shell=/bin/bash
+    createhome=yes
+    home=/opt/app/home/{{ user_type.username }}
+    group={{ user_type.groupname }}
+    comment='create with ansible'
+
+- name: Setup | authorized key upload
+  authorized_key:
+    user={{ user_type.username }}
+    key="{{ lookup('file', 'pub_keys/commonuser.pub') }}"
+
+- name: Sudoers | update sudoers file and validate
+  lineinfile: "dest=/etc/sudoers
+    insertafter=EOF
+    line='{{ user_type.username }} ALL=(ALL) NOPASSWD: ALL'
+    regexp='^{{ user_type.username }} .*'
+    state=present"
+  when: '{{ user_type.use_sudo }} == True'
