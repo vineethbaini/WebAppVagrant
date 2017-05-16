@@ -1,2 +1,13 @@
 ---
 # tasks file for create_users
+- include: consolidated_user.yml
+  with_items: '{{app_users}}'
+  loop_control:
+    loop_var: user_type
+  when: "'app' in inventory_hostname"
+
+- include: consolidated_user.yml
+  with_items: '{{db_users}}'
+  loop_control:
+    loop_var: user_type
+  when: "'db' in inventory_hostname"

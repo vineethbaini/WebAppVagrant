@@ -1,2 +1,15 @@
 ---
 # vars file for create_users
+app_users:
+  - username: apache
+    groupname: appsys
+    use_sudo: yes
+
+  - username: xdmadm
+    groupname: appsys
+    use_sudo: yes
+
+db_users:
+  - username: mysql
+    groupname: mysql
+    use_sudo: yes
